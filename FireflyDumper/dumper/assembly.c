@@ -29,7 +29,7 @@ void dump_assembly(FILE* f, Il2CppAssembly* assembly, int assembly_index) {
                    "// Module: %s (%i)\n",
                 i,
                 (namespace[0] ? namespace : "(none)"),
-                name,
+                full_name,
                 Il2CppFunctions_t.image_get_name(image),
                 assembly_index
         );

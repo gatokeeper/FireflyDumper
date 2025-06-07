@@ -193,23 +193,28 @@ void dump_fields(Il2CppClass* class, FILE* f) {
 
             if (strcmp(type_name, "int") == 0 || strcmp(type_name, "uint") == 0) {
                 int val = *(int*)raw_data;
-                fprintf(f, "\t%s%s %s = %d; // Offset: 0x%llX\n", flags_buf, type_name, name, val, offset);
+                fprintf(f, "\t%s%s %s = %d; // Offset: 0x%llX Token: 0x0000000\n", flags_buf, type_name, name, val, offset);
             } else if (strcmp(type_name, "long") == 0 || strcmp(type_name, "ulong") == 0) {
                 long long val = *(long long*)raw_data;
-                fprintf(f, "\t%s%s %s = %lld; // Offset: 0x%llX\n", flags_buf, type_name, name, val, offset);
+                fprintf(f, "\t%s%s %s = %lld; // Offset: 0x%llX Token: 0x0000000\n", flags_buf, type_name, name, val, offset);
             } else if (strcmp(type_name, "float") == 0) {
                 float val = *(float*)raw_data;
-                fprintf(f, "\t%s%s %s = %g; // Offset: 0x%llX\n", flags_buf, type_name, name, val, offset);
+                fprintf(f, "\t%s%s %s = %g; // Offset: 0x%llX Token: 0x0000000\n", flags_buf, type_name, name, val, offset);
             } else if (strcmp(type_name, "double") == 0) {
                 double val = *(double*)raw_data;
-                fprintf(f, "\t%s%s %s = %g; // Offset: 0x%llX\n", flags_buf, type_name, name, val, offset);
-            } else {
+                fprintf(f, "\t%s%s %s = %g; // Offset: 0x%llX Token: 0x0000000\n", flags_buf, type_name, name, val, offset);
+            } else if (Il2CppFunctions_t.class_is_enum(class)) {
+                int val = *(int*)raw_data;
+                fprintf(f, "\t%s%s %s = %d; // Offset: 0x%llX Token: 0x0000000\n", flags_buf, type_name, name, val, offset);
+            }
+            else {
                 fprintf(f, "\t%s%s %s; // Offset: 0x%llX Token: 0x0000000\n", flags_buf, type_name, name, offset);
             }
             fflush(f);
-        }
+        } else {
+            fprintf(f, "\t%s%s %s; // Offset: 0x%llX Token: 0x0000000\n", flags_buf, type_name, name, offset);
 
-//        fprintf(f, "\t%s%s %s; // Offset: 0x%llX Token: 0x0000000\n", flags_buf, type_name, name, offset);
+        }
         fflush(f);
     }
 }
