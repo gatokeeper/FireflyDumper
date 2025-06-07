@@ -2,7 +2,7 @@
 
 #include <string.h>
 #include "fields.h"
-#include "../api/il2cpp_api_functions.h"
+#include "../entry.h"
 
 const char* convert_primitive_types(const char* type_name) {
     if (strcmp(type_name, "System.Boolean") == 0) {
@@ -155,6 +155,15 @@ const char* get_field_flags(FieldInfo* field, char* out_buf, size_t buf_size) {
     return out_buf;
 }
 
+typedef void ReflectionFieldInfo;
+
+FieldInfo* GetFieldFromHandle(FieldInfo* field) {
+    typedef FieldInfo* (*GetFieldFromHandle_t)(FieldInfo* field);
+    uintptr_t rva = settings.ga + 0x104ED800;
+    GetFieldFromHandle_t GetFieldFromHandlePtr = (GetFieldFromHandle_t)rva;
+    return GetFieldFromHandlePtr(field);
+}
+
 void dump_fields(Il2CppClass* class, FILE* f) {
     FieldInfo* field;
     void* iter = 0;
@@ -172,7 +181,35 @@ void dump_fields(Il2CppClass* class, FILE* f) {
         char flags_buf[128];
         get_field_flags(field, flags_buf, sizeof(flags_buf));
 
-        fprintf(f, "\t%s%s %s; // Offset: 0x%llX Token: 0x0000000\n", flags_buf, type_name, name, offset);
+        if (strstr(flags_buf, "const")) {
+            typedef Il2CppObject *(*GetRawConstantValue_t)(Il2CppReflectionField* field);
+
+            uintptr_t rva = settings.ga + 0x104F3910;
+            GetRawConstantValue_t GetRawConstantValuePtr = (GetRawConstantValue_t)rva;
+            ReflectionFieldInfo* field_info = GetFieldFromHandle(field);
+            Il2CppObject* value = GetRawConstantValuePtr(field_info);
+
+            char* raw_data = (char*)value + 16;
+
+            if (strcmp(type_name, "int") == 0 || strcmp(type_name, "uint") == 0) {
+                int val = *(int*)raw_data;
+                fprintf(f, "\t%s%s %s = %d; // Offset: 0x%llX\n", flags_buf, type_name, name, val, offset);
+            } else if (strcmp(type_name, "long") == 0 || strcmp(type_name, "ulong") == 0) {
+                long long val = *(long long*)raw_data;
+                fprintf(f, "\t%s%s %s = %lld; // Offset: 0x%llX\n", flags_buf, type_name, name, val, offset);
+            } else if (strcmp(type_name, "float") == 0) {
+                float val = *(float*)raw_data;
+                fprintf(f, "\t%s%s %s = %g; // Offset: 0x%llX\n", flags_buf, type_name, name, val, offset);
+            } else if (strcmp(type_name, "double") == 0) {
+                double val = *(double*)raw_data;
+                fprintf(f, "\t%s%s %s = %g; // Offset: 0x%llX\n", flags_buf, type_name, name, val, offset);
+            } else {
+                fprintf(f, "\t%s%s %s; // Offset: 0x%llX Token: 0x0000000\n", flags_buf, type_name, name, offset);
+            }
+            fflush(f);
+        }
+
+//        fprintf(f, "\t%s%s %s; // Offset: 0x%llX Token: 0x0000000\n", flags_buf, type_name, name, offset);
         fflush(f);
     }
 }

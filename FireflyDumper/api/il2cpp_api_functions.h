@@ -164,8 +164,13 @@ typedef void Il2CppType;
 typedef void Il2CppObject;
 typedef void Il2CppAssembly;
 typedef void Il2CppImage;
+typedef void Il2CppThread;
 typedef void FieldInfo;
 typedef void MethodInfo;
+
+typedef struct {
+    FieldInfo* field;
+} Il2CppReflectionField;
 
 typedef void* (*assembly_get_image_t)(void* assembly);
 typedef MethodInfo* (*class_get_methods_t)(void* klass, void** iter);
@@ -193,6 +198,7 @@ typedef const char* (*type_get_name_t)(void* type);
 typedef bool (*type_is_byref_t)(void* type);
 typedef uint32_t (*type_get_attrs_t)(void* type);
 typedef const char* (*image_get_name_t)(void* image);
+typedef Il2CppThread* (*thread_attach_t)(Il2CppDomain* domain);
 
 typedef struct {
     void** table;
@@ -223,6 +229,8 @@ typedef struct {
     type_is_byref_t type_is_byref;
     type_get_attrs_t type_get_attrs;
     image_get_name_t image_get_name;
+    thread_attach_t thread_attach;
+
 } Il2CppFunctions;
 
 // global

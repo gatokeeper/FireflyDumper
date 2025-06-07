@@ -14,6 +14,7 @@ void dump_domain(FILE* f) {
     settings.class_byval = 128;
 
     Il2CppDomain* domain = Il2CppFunctions_t.domain_get();
+    Il2CppThread* thread = Il2CppFunctions_t.thread_attach(domain);
     Il2CppAssembly** assemblies = Il2CppFunctions_t.domain_get_assemblies(domain, &assembly_count);
 
     int i;

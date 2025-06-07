@@ -15,7 +15,6 @@ typedef struct {
 
 extern Settings settings;
 
-size_t brute_class_byval();
 DWORD MainThread(LPVOID hMod);
 
 #endif //UNTITLED_ENTRY_H

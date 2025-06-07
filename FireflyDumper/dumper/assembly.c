@@ -18,7 +18,6 @@ void dump_assembly(FILE* f, Il2CppAssembly* assembly, int assembly_index) {
     for (i = 0; i < class_count; i++) {
         Il2CppClass* class = Il2CppFunctions_t.image_get_class(image, i);
 
-//        const char* full_name = Il2CppFunctions_t.class_get_name(class);
         const char *full_name = Il2CppFunctions_t.type_get_name(class_get_type(class));
         const char *dot = strrchr(full_name, '.');
         const char *name = dot ? dot + 1 : full_name;

@@ -1,7 +1,6 @@
-﻿
-
-#include <string.h>
+﻿#include <string.h>
 #include <stdbool.h>
+
 #include "methods.h"
 #include "fields.h"
 

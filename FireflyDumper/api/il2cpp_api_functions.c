@@ -61,6 +61,8 @@ void il2cpp_functions_init(uintptr_t il2cpp_init_addr) {
     RESOLVE_FUNC(type_is_byref, 162);
     RESOLVE_FUNC(type_get_attrs, 163);
 
+    RESOLVE_FUNC(thread_attach, 154);
+
     #undef RESOLVE_FUNC
 } // il2cpp_functions_init
 
