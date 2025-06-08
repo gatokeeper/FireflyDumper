@@ -4,6 +4,7 @@
 #include "../entry.h"
 
 Il2CppFunctions Il2CppFunctions_t;
+Il2CppRVAOffsets Il2CppRVAOffsets_t;
 
 uintptr_t method_get_relative_pointer(void* arg) {
     if (!arg) return 0;
@@ -19,6 +20,11 @@ uintptr_t method_get_relative_pointer(void* arg) {
 
 void* class_get_type(void* arg) {
     return (void*)((uintptr_t)arg + settings.class_byval);
+}
+
+void il2cpp_rva_offsets_init() {
+    Il2CppRVAOffsets_t.GetFieldFromHandle = 0x104ED800;
+    Il2CppRVAOffsets_t.GetRawConstantValue = 0x104F3910;
 }
 
 void il2cpp_functions_init(uintptr_t il2cpp_init_addr) {

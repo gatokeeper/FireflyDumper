@@ -38,18 +38,19 @@ DWORD MainThread(LPVOID hMod) {
         settings.up = (uintptr_t)GetModuleHandleA("UnityPlayer.dll");
         settings.il2cpp_init = settings.up + (il2cpp_init_addr - ida_image_base);
         il2cpp_functions_init(settings.il2cpp_init);
-
+        il2cpp_rva_offsets_init();
 
         if (settings.ga && settings.up && settings.il2cpp_init) {
-            snprintf(buffer, sizeof(buffer), "GameAssembly.dll base address: 0x%p", (void*)settings.ga);
+            snprintf(buffer, sizeof(buffer), "GameAssembly.dll base address: 0x%llX", (uintptr_t)settings.ga);
             logger_info(buffer);
 
-            snprintf(buffer, sizeof(buffer), "UnityPlayer.dll base address: 0x%p", (void*)settings.up);
+            snprintf(buffer, sizeof(buffer), "UnityPlayer.dll base address:  0x%llX", (uintptr_t)settings.up);
             logger_info(buffer);
 
-            snprintf(buffer, sizeof(buffer), "il2cpp_init: 0x%p", (void*)settings.il2cpp_init);
+            snprintf(buffer, sizeof(buffer), "il2cpp_init base address:      0x%llX", (uintptr_t)settings.il2cpp_init);
             logger_info(buffer);
 
+            logger_info("Waiting a few seconds before dumping...");
             Sleep(5000);
             dump_domain(fptr);
             break;

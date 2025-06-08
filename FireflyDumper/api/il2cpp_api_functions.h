@@ -165,6 +165,7 @@ typedef void Il2CppObject;
 typedef void Il2CppAssembly;
 typedef void Il2CppImage;
 typedef void Il2CppThread;
+typedef void ReflectionFieldInfo;
 typedef void FieldInfo;
 typedef void MethodInfo;
 
@@ -233,11 +234,18 @@ typedef struct {
 
 } Il2CppFunctions;
 
+typedef struct {
+    uintptr_t GetFieldFromHandle;
+    uintptr_t GetRawConstantValue;
+} Il2CppRVAOffsets;
+
 // global
 extern Il2CppFunctions Il2CppFunctions_t;
+extern Il2CppRVAOffsets Il2CppRVAOffsets_t;
 
 uintptr_t method_get_relative_pointer(void* arg);
 void* class_get_type(void* arg);
+void il2cpp_rva_offsets_init();
 void il2cpp_functions_init(uintptr_t il2cpp_init_addr);
 
 #endif //ASTROLABE_IL2CPP_API_FUNCTIONS_H
