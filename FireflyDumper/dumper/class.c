@@ -27,7 +27,7 @@ void get_class_modifiers(Il2CppClass* class, FILE* f) {
             fprintf(f, "protected internal ");
             break;
         default:
-            fprintf(f, "/* unknown visiblity type */"); // should never happen
+            fprintf(f, "/* unknown visibility type */"); // should never happen
             break;
     }
     
