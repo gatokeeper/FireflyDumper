@@ -11,6 +11,8 @@ const char* short_type_name(Il2CppType* type) {
 void dump_methods(Il2CppClass* class, FILE* f) {
     MethodInfo* method;
     void* iter = 0;
+    bool printed_constructors = false;
+    bool printed_methods = false;
 
     while ((method = Il2CppFunctions_t.class_get_methods(class, &iter))) {
         const char* name = Il2CppFunctions_t.method_get_name(method);
@@ -21,9 +23,27 @@ void dump_methods(Il2CppClass* class, FILE* f) {
         const char* dot = strrchr(full_type_name, '.');
         const char* type_name = dot ? dot + 1 : full_type_name;
 
-        fprintf(f, "\t%s %s(", type_name, name);
-        bool first = true;
+        bool is_ctor = (strcmp(name, ".ctor") == 0 || strcmp(name, ".cctor") == 0);
 
+        if (is_ctor && !printed_constructors) {
+            fprintf(f, "\n\t// Constructors\n\n");
+            printed_constructors = true;
+        }
+
+        if (!is_ctor && !printed_methods) {
+            fprintf(f, "\t// Methods\n\n");
+            printed_methods = true;
+        }
+
+        fprintf(f, "\t// RVA: 0x%lX\n", (unsigned long) method_get_relative_pointer(method));
+
+        if (is_ctor) {
+            fprintf(f, "\tvoid %s(", name);
+        } else {
+            fprintf(f, "\t%s %s(", type_name, name);
+        }
+
+        bool first = true;
         int i;
         for (i = 0; i < Il2CppFunctions_t.method_get_param_count(method); i++) {
             Il2CppType* param = Il2CppFunctions_t.method_get_param(method, i);
@@ -33,7 +53,7 @@ void dump_methods(Il2CppClass* class, FILE* f) {
             fprintf(f, "%s param%i", short_type_name(param), i);
             first = false;
         }
-        fprintf(f, ") { } // RVA 0x%lX\n", (unsigned long) method_get_relative_pointer(method));
+        fprintf(f, ") { }\n\n");
         fflush(f);
     }
 }

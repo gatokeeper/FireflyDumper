@@ -24,14 +24,14 @@ void dump_assembly(FILE* f, Il2CppAssembly* assembly, int assembly_index) {
         const char* namespace = Il2CppFunctions_t.class_get_namespace(class);
 
         fprintf(f, "// TypeDefIndex: %i\n"
-                   "// Namespace: %s\n"
+                   "// Module: %s (%i)\n"
                    "// FullName: %s\n"
-                   "// Module: %s (%i)\n",
+                   "// Namespace: %s\n",
                 i,
-                (namespace[0] ? namespace : "(none)"),
-                full_name,
                 Il2CppFunctions_t.image_get_name(image),
-                assembly_index
+                assembly_index,
+                full_name,
+                (namespace[0] ? namespace : "(none)")
         );
 
         get_class_modifiers(class, f);
@@ -50,17 +50,15 @@ void dump_assembly(FILE* f, Il2CppAssembly* assembly, int assembly_index) {
         Il2CppClass* interface;
         void* iter = NULL;
 
-        while((interface = Il2CppFunctions_t.class_get_interfaces(class, &iter))) {
+        while ((interface = Il2CppFunctions_t.class_get_interfaces(class, &iter))) {
             const char* full = Il2CppFunctions_t.type_get_name(class_get_type(interface));
-            const char* dot1 = strrchr(full, '.');
-            const char* name1 = dot1 ? dot1 + 1 : full_name;
 
-            if (strcmp(name1, "Object") != 0) {
+            if (strcmp(full, "Object") != 0) {
                 if (is_first_interface == true) {
-                    fprintf(f, " : %s", name1);
+                    fprintf(f, " : %s", full);
                     is_first_interface = false;
                 } else {
-                    fprintf(f, ", %s", name1);
+                    fprintf(f, ", %s", full);
                 }
             }
         }
@@ -69,7 +67,8 @@ void dump_assembly(FILE* f, Il2CppAssembly* assembly, int assembly_index) {
         fprintf(f, "\t// Fields\n");
         dump_fields(class, f);
 
-        fprintf(f, "\n\t// Methods\n");
+        // moved to dump_methods#
+//        fprintf(f, "\n\t// Methods\n\n");
         dump_methods(class, f);
         fprintf(f, "}\n\n");
         fflush(f);

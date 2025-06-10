@@ -176,36 +176,35 @@ bool UnboxIl2CppField(
         char* flags_buf,
         const char* name,
         const char* data,
-        size_t offset,
         FILE* f
 ) {
     if (strcmp(type_name, "int") == 0 || strcmp(type_name, "uint") == 0) {
         int val = *(int*)data;
-        fprintf(f, "\t%s%s %s = %d; // Offset: 0x%llX Token: 0x0000000\n", flags_buf, type_name, name, val, offset);
+        fprintf(f, "\t%s%s %s = %d; Token: 0x0000000\n", flags_buf, type_name, name, val);
         fflush(f);
         return true;
 
     } else if (strcmp(type_name, "long") == 0 || strcmp(type_name, "ulong") == 0) {
         long long val = *(long long*)data;
-        fprintf(f, "\t%s%s %s = %lld; // Offset: 0x%llX Token: 0x0000000\n", flags_buf, type_name, name, val, offset);
+        fprintf(f, "\t%s%s %s = %lld; Token: 0x0000000\n", flags_buf, type_name, name, val);
         fflush(f);
         return true;
 
     } else if (strcmp(type_name, "float") == 0) {
         float val = *(float*)data;
-        fprintf(f, "\t%s%s %s = %g; // Offset: 0x%llX Token: 0x0000000\n", flags_buf, type_name, name, val, offset);
+        fprintf(f, "\t%s%s %s = %g; Token: 0x0000000\n", flags_buf, type_name, name, val);
         fflush(f);
         return true;
 
     } else if (strcmp(type_name, "double") == 0) {
         double val = *(double*)data;
-        fprintf(f, "\t%s%s %s = %g; // Offset: 0x%llX Token: 0x0000000\n", flags_buf, type_name, name, val, offset);
+        fprintf(f, "\t%s%s %s = %g; Token: 0x0000000\n", flags_buf, type_name, name, val);
         fflush(f);
         return true;
 
     } else if (Il2CppFunctions_t.class_is_enum(class)) {
         int val = *(int*)data;
-        fprintf(f, "\t%s%s %s = %d; // Offset: 0x%llX Token: 0x0000000\n", flags_buf, type_name, name, val, offset);
+        fprintf(f, "\t%s%s %s = %d; Token: 0x0000000\n", flags_buf, type_name, name, val);
         fflush(f);
         return true;
     } else return false;
@@ -235,8 +234,9 @@ void dump_fields(Il2CppClass* class, FILE* f) {
             Il2CppObject* value = GetRawConstantValue(field);
             char* raw_data = (char*)value + 16;
 
-            if (!UnboxIl2CppField(class, type_name, flags_buf, name, raw_data, offset, f)) {
-                fprintf(f, "\t%s%s %s; // Offset: 0x%llX Token: 0x0000000\n", flags_buf, type_name, name, offset);
+            if (!UnboxIl2CppField(class, type_name, flags_buf, name, raw_data, f)) {
+                fprintf(f, "\t%s%s %s; // Token: 0x0000000\n", flags_buf, type_name, name);
+                continue;
             }
         } else {
             fprintf(f, "\t%s%s %s; // Offset: 0x%llX Token: 0x0000000\n", flags_buf, type_name, name, offset);

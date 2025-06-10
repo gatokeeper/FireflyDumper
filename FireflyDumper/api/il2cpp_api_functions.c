@@ -23,8 +23,8 @@ void* class_get_type(void* arg) {
 }
 
 void il2cpp_rva_offsets_init() {
-    Il2CppRVAOffsets_t.GetFieldFromHandle = 0x104ED800;
-    Il2CppRVAOffsets_t.GetRawConstantValue = 0x104F3910;
+    Il2CppRVAOffsets_t.GetFieldFromHandle = 0x10503060; // FieldInfo::GetFieldFromHandle
+    Il2CppRVAOffsets_t.GetRawConstantValue = 0x10509170; // MonoField::GetRawConstantValue
 }
 
 void il2cpp_functions_init(uintptr_t il2cpp_init_addr) {
