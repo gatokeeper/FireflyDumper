@@ -18,10 +18,10 @@ void dump_assembly(FILE* f, Il2CppAssembly* assembly, int assembly_index) {
     for (i = 0; i < class_count; i++) {
         Il2CppClass* class = Il2CppFunctions_t.image_get_class(image, i);
 
-        const char *full_name = Il2CppFunctions_t.type_get_name(class_get_type(class));
-        const char *dot = strrchr(full_name, '.');
-        const char *name = dot ? dot + 1 : full_name;
-        const char *namespace = Il2CppFunctions_t.class_get_namespace(class);
+        const char* full_name = Il2CppFunctions_t.type_get_name(class_get_type(class));
+        const char* dot = strrchr(full_name, '.');
+        const char* name = dot ? dot + 1 : full_name;
+        const char* namespace = Il2CppFunctions_t.class_get_namespace(class);
 
         fprintf(f, "// TypeDefIndex: %i\n"
                    "// Namespace: %s\n"
@@ -37,11 +37,31 @@ void dump_assembly(FILE* f, Il2CppAssembly* assembly, int assembly_index) {
         get_class_modifiers(class, f);
         fprintf(f, "%s", name);
 
+        bool is_first_interface = true;
         Il2CppClass *parent = Il2CppFunctions_t.class_get_parent(class);
         if (parent != NULL) {
             const char* name1 = Il2CppFunctions_t.class_get_name(parent);
             if (strcmp(name1, "Object") != 0) {
                 fprintf(f, " : %s", name1);
+                is_first_interface = false;
+            }
+        }
+
+        Il2CppClass* interface;
+        void* iter = NULL;
+
+        while((interface = Il2CppFunctions_t.class_get_interfaces(class, &iter))) {
+            const char* full = Il2CppFunctions_t.type_get_name(class_get_type(interface));
+            const char* dot1 = strrchr(full, '.');
+            const char* name1 = dot1 ? dot1 + 1 : full_name;
+
+            if (strcmp(name1, "Object") != 0) {
+                if (is_first_interface == true) {
+                    fprintf(f, " : %s", name1);
+                    is_first_interface = false;
+                } else {
+                    fprintf(f, ", %s", name1);
+                }
             }
         }
 

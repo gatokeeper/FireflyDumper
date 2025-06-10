@@ -49,6 +49,7 @@ void il2cpp_functions_init(uintptr_t il2cpp_init_addr) {
     RESOLVE_FUNC(class_get_fields, 31);
     RESOLVE_FUNC(class_get_parent, 40);
     RESOLVE_FUNC(class_is_valuetype, 43);
+    RESOLVE_FUNC(class_get_interfaces, 33);
     RESOLVE_FUNC(class_get_flags, 45);
     RESOLVE_FUNC(class_from_type, 49);
     RESOLVE_FUNC(class_is_enum, 53);

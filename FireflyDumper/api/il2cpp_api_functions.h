@@ -188,6 +188,7 @@ typedef bool (*class_is_valuetype_t)(void* klass);
 typedef int32_t (*class_get_flags_t)(void* klass);
 typedef void* (*class_from_type_t)(void* type);
 typedef bool (*class_is_enum_t)(void* klass);
+typedef Il2CppClass* (*class_get_interfaces_t)(Il2CppClass* class, void** iter);
 typedef int32_t (*field_get_flags_t)(void* field);
 typedef const char* (*field_get_name_t)(void* field);
 typedef size_t (*field_get_offset_t)(void* field);
@@ -216,6 +217,7 @@ typedef struct {
     class_get_fields_t class_get_fields;
     class_get_parent_t class_get_parent;
     class_is_valuetype_t class_is_valuetype;
+    class_get_interfaces_t class_get_interfaces;
     class_get_flags_t class_get_flags;
     class_from_type_t class_from_type;
     class_is_enum_t class_is_enum;
