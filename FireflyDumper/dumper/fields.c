@@ -11,17 +11,11 @@ const char* convert_primitive_types(const char* type_name) {
     if (strcmp(type_name, "System.String") == 0) {
         return "string";
     }
-    if (strcmp(type_name, "System.String[]") == 0) {
-        return "string[]";
-    }
     if (strcmp(type_name, "System.Void") == 0) {
         return "void";
     }
     if (strcmp(type_name, "System.Byte") == 0) {
         return "byte";
-    }
-    if (strcmp(type_name, "System.Byte[]") == 0) {
-        return "byte[]";
     }
     if (strcmp(type_name, "System.SByte") == 0) {
         return "sbyte";
@@ -138,6 +132,9 @@ const char* get_field_flags(FieldInfo* field, char* out_buf, size_t buf_size) {
             break;
         case FIELD_ATTRIBUTE_FAM_OR_ASSEM:
             strncat(out_buf, "protected internal ", buf_size - strlen(out_buf) - 1);
+            break;
+        default:
+            strncat(out_buf, "public ", buf_size - strlen(out_buf) - 1);
             break;
     }
 

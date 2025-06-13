@@ -5,6 +5,20 @@
 #include "methods.h"
 #include "class.h"
 
+// stack overflow 💗
+char *strremove(char *str, const char *sub) {
+    char *p, *q, *r;
+    if (*sub && (q = r = strstr(str, sub)) != NULL) {
+        size_t len = strlen(sub);
+        while ((r = strstr(p = r + len, sub)) != NULL) {
+            memmove(q, p, r - p);
+            q += r - p;
+        }
+        memmove(q, p, strlen(p) + 1);
+    }
+    return str;
+}
+
 void dump_assembly(FILE* f, Il2CppAssembly* assembly, int assembly_index) {
     Il2CppImage* image = Il2CppFunctions_t.assembly_get_image(assembly);
     size_t class_count = Il2CppFunctions_t.image_get_class_count(image);
@@ -52,13 +66,22 @@ void dump_assembly(FILE* f, Il2CppAssembly* assembly, int assembly_index) {
 
         while ((interface = Il2CppFunctions_t.class_get_interfaces(class, &iter))) {
             const char* full = Il2CppFunctions_t.type_get_name(class_get_type(interface));
+            
+            char buffer[100];
+            if (strcmp(namespace, "") != 0) {
+                snprintf(buffer, sizeof(buffer), "%s.", namespace);
+            }
 
-            if (strcmp(full, "Object") != 0) {
+            const char* name1 = strremove((char*)full, (const char*)buffer);
+            const char* dot1 = strrchr(name1, '.');
+            const char* name2 = dot1 ? dot1 + 1 : name1;
+
+            if (strcmp(name1, "Object") != 0) {
                 if (is_first_interface == true) {
-                    fprintf(f, " : %s", full);
+                    fprintf(f, " : %s", name2);
                     is_first_interface = false;
                 } else {
-                    fprintf(f, ", %s", full);
+                    fprintf(f, ", %s", name2);
                 }
             }
         }
@@ -67,7 +90,6 @@ void dump_assembly(FILE* f, Il2CppAssembly* assembly, int assembly_index) {
         fprintf(f, "\t// Fields\n");
         dump_fields(class, f);
 
-        // moved to dump_methods#
 //        fprintf(f, "\n\t// Methods\n\n");
         dump_methods(class, f);
         fprintf(f, "}\n\n");
