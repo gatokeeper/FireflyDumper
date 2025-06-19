@@ -46,4 +46,5 @@ void dump_domain(FILE* f) {
         dump_assembly(f, assemblies[i], i);
     }
     logger_info("Done dumping :3, written dump to dump.cs");
+    fclose(f);
 }

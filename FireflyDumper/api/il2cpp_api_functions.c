@@ -23,8 +23,9 @@ void* class_get_type(void* arg) {
 }
 
 void il2cpp_rva_offsets_init() {
-    Il2CppRVAOffsets_t.GetFieldFromHandle = 0x105103A0; // FieldInfo::GetFieldFromHandle
-    Il2CppRVAOffsets_t.GetRawConstantValue = 0x105164B0; // MonoField::GetRawConstantValue
+    Il2CppRVAOffsets_t.field.GetFieldFromHandle = 0x105103A0;  // FieldInfo::GetFieldFromHandle
+    Il2CppRVAOffsets_t.field.GetRawConstantValue = 0x105164B0; // MonoField::GetRawConstantValue
+    Il2CppRVAOffsets_t.field.GetCustomAttributes = 0x10515EF0; // MonoField::GetCustomAttributes
 }
 
 void il2cpp_functions_init(uintptr_t il2cpp_init_addr) {
@@ -38,14 +39,6 @@ void il2cpp_functions_init(uintptr_t il2cpp_init_addr) {
     RESOLVE_FUNC(class_get_methods, 35);
     RESOLVE_FUNC(class_get_name, 37);
     RESOLVE_FUNC(class_get_namespace, 39);
-
-    RESOLVE_FUNC(domain_get, 63);
-    RESOLVE_FUNC(domain_get_assemblies, 65);
-
-    RESOLVE_FUNC(image_get_class_count, 169);
-    RESOLVE_FUNC(image_get_class, 170);
-    RESOLVE_FUNC(image_get_name, 168);
-
     RESOLVE_FUNC(class_get_fields, 31);
     RESOLVE_FUNC(class_get_parent, 40);
     RESOLVE_FUNC(class_is_valuetype, 43);
@@ -53,6 +46,13 @@ void il2cpp_functions_init(uintptr_t il2cpp_init_addr) {
     RESOLVE_FUNC(class_get_flags, 45);
     RESOLVE_FUNC(class_from_type, 49);
     RESOLVE_FUNC(class_is_enum, 53);
+
+    RESOLVE_FUNC(domain_get, 63);
+    RESOLVE_FUNC(domain_get_assemblies, 65);
+
+    RESOLVE_FUNC(image_get_class_count, 169);
+    RESOLVE_FUNC(image_get_class, 170);
+    RESOLVE_FUNC(image_get_name, 168);
 
     RESOLVE_FUNC(field_get_flags, 72);
     RESOLVE_FUNC(field_get_name, 73);

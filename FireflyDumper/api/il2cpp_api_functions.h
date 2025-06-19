@@ -166,12 +166,47 @@ typedef void Il2CppAssembly;
 typedef void Il2CppImage;
 typedef void Il2CppThread;
 typedef void ReflectionFieldInfo;
+typedef void ReflectionMethodInfo;
+typedef void ParameterInfo;
 typedef void FieldInfo;
 typedef void MethodInfo;
+
+typedef struct MonitorData MonitorData;
+typedef uint32_t il2cpp_array_size_t;
+
+typedef struct {
+    void* klass;
+    void* monitor;
+    int32_t length;
+    uint16_t chars[];
+} Il2CppString;
 
 typedef struct {
     FieldInfo* field;
 } Il2CppReflectionField;
+
+typedef struct {
+    uintptr_t length;
+    uintptr_t lower_bound;
+} Il2CppArrayBounds;
+
+typedef struct {
+    Il2CppClass* klass;
+    MonitorData* monitor;
+    Il2CppArrayBounds* bounds;
+    uintptr_t max_length;
+    Il2CppObject* vector[0];
+} Il2CppArray;
+
+typedef struct {
+    void* methodPointer;
+    void* invoker_method;
+    const char* name;
+    Il2CppClass* klass;
+    const Il2CppType* return_type;
+    ParameterInfo** parameters;
+    uint8_t parameters_count;
+} FakeMethodInfo;
 
 typedef void* (*assembly_get_image_t)(void* assembly);
 typedef MethodInfo* (*class_get_methods_t)(void* klass, void** iter);
@@ -238,7 +273,13 @@ typedef struct {
 
 typedef struct {
     uintptr_t GetFieldFromHandle;
+
     uintptr_t GetRawConstantValue;
+    uintptr_t GetCustomAttributes;
+} Field;
+
+typedef struct {
+    Field field;
 } Il2CppRVAOffsets;
 
 // global
