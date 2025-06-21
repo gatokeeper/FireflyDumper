@@ -165,6 +165,7 @@ typedef void Il2CppObject;
 typedef void Il2CppAssembly;
 typedef void Il2CppImage;
 typedef void Il2CppThread;
+typedef void Il2CppType;
 typedef void ReflectionFieldInfo;
 typedef void ReflectionMethodInfo;
 typedef void ParameterInfo;
@@ -276,6 +277,8 @@ typedef struct {
 
     uintptr_t GetRawConstantValue;
     uintptr_t GetCustomAttributes;
+
+    uintptr_t get_MetadataToken;
 } Field;
 
 typedef struct {

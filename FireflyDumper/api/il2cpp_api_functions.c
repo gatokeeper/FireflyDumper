@@ -26,6 +26,7 @@ void il2cpp_rva_offsets_init() {
     Il2CppRVAOffsets_t.field.GetFieldFromHandle = 0x105103A0;  // FieldInfo::GetFieldFromHandle
     Il2CppRVAOffsets_t.field.GetRawConstantValue = 0x105164B0; // MonoField::GetRawConstantValue
     Il2CppRVAOffsets_t.field.GetCustomAttributes = 0x10515EF0; // MonoField::GetCustomAttributes
+    Il2CppRVAOffsets_t.field.get_MetadataToken = 0x10511460;   // MemberInfo::get_MetadataToken
 }
 
 void il2cpp_functions_init(uintptr_t il2cpp_init_addr) {

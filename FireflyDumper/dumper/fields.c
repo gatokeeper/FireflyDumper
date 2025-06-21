@@ -152,6 +152,12 @@ const char* get_field_flags(FieldInfo* field, char* out_buf, size_t buf_size) {
     return out_buf;
 }
 
+char* decimal_to_hex(uint32_t tok) {
+    static char buf[16];
+    snprintf(buf, sizeof(buf), "0x%08X", tok);
+    return buf;
+}
+
 FieldInfo* GetFieldFromHandle(FieldInfo* field) {
     typedef FieldInfo* (*GetFieldFromHandle_t)(FieldInfo* field);
     uintptr_t rva = settings.ga + Il2CppRVAOffsets_t.field.GetFieldFromHandle;
@@ -175,41 +181,49 @@ Il2CppArray* GetCustomAttributes(FieldInfo* field, bool inherit) {
     return GetCustomAttributesPtr(field_info, inherit);
 }
 
+uint32_t get_MetadataToken(Il2CppObject* obj) {
+    typedef uint32_t (*get_MetadataToken_t)(Il2CppObject* self);
+    uintptr_t rva = settings.ga + Il2CppRVAOffsets_t.field.get_MetadataToken;
+    get_MetadataToken_t get_MetadataTokenPtr = (get_MetadataToken_t)rva;
+    return get_MetadataTokenPtr(obj);
+}
+
 bool UnboxIl2CppField(
         Il2CppClass* class,
         const char* type_name,
         char* flags_buf,
         const char* name,
         const char* data,
+        char* tok,
         FILE* f
 ) {
     if (strcmp(type_name, "int") == 0 || strcmp(type_name, "uint") == 0) {
         int val = *(int*)data;
-        fprintf(f, "\t%s%s %s = %d; // Token: 0x0000000\n", flags_buf, type_name, name, val);
+        fprintf(f, "\t%s%s %s = %d; // Token: %s\n", flags_buf, type_name, name, val, tok);
         fflush(f);
         return true;
 
     } else if (strcmp(type_name, "long") == 0 || strcmp(type_name, "ulong") == 0) {
         long long val = *(long long*)data;
-        fprintf(f, "\t%s%s %s = %lld; // Token: 0x0000000\n", flags_buf, type_name, name, val);
+        fprintf(f, "\t%s%s %s = %lld; // Token: %s\n", flags_buf, type_name, name, val, tok);
         fflush(f);
         return true;
 
     } else if (strcmp(type_name, "float") == 0) {
         float val = *(float*)data;
-        fprintf(f, "\t%s%s %s = %g; // Token: 0x0000000\n", flags_buf, type_name, name, val);
+        fprintf(f, "\t%s%s %s = %g; // Token: %s\n", flags_buf, type_name, name, val, tok);
         fflush(f);
         return true;
 
     } else if (strcmp(type_name, "double") == 0) {
         double val = *(double*)data;
-        fprintf(f, "\t%s%s %s = %g; // Token: 0x0000000\n", flags_buf, type_name, name, val);
+        fprintf(f, "\t%s%s %s = %g; // Token: %s\n", flags_buf, type_name, name, val, tok);
         fflush(f);
         return true;
 
     } else if (Il2CppFunctions_t.class_is_enum(class)) {
         int val = *(int*)data;
-        fprintf(f, "\t%s%s %s = %d; // Token: 0x0000000\n", flags_buf, type_name, name, val);
+        fprintf(f, "\t%s%s %s = %d; // Token: %s\n", flags_buf, type_name, name, val, tok);
         fflush(f);
         return true;
     } else return false;
@@ -341,6 +355,7 @@ void dump_fields(Il2CppClass* class, FILE* f) {
 
         char flags_buf[128];
         get_field_flags(field, flags_buf, sizeof(flags_buf));
+        char* tok = decimal_to_hex((get_MetadataToken(GetFieldFromHandle(field))));
 
         Il2CppArray* attr_array = GetCustomAttributes(field, true);
 
@@ -357,12 +372,12 @@ void dump_fields(Il2CppClass* class, FILE* f) {
             Il2CppObject* value = GetRawConstantValue(field);
             char* raw_data = (char*)value + 16;
 
-            if (!UnboxIl2CppField(class, type_name, flags_buf, name, raw_data, f)) {
-                fprintf(f, "\t%s%s %s; // Token: 0x0000000\n", flags_buf, type_name, name);
+            if (!UnboxIl2CppField(class, type_name, flags_buf, name, raw_data, tok, f)) {
+                fprintf(f, "\t%s%s %s; // Token: %s\n", flags_buf, type_name, name, tok);
                 continue;
             }
         } else {
-            fprintf(f, "\t%s%s %s; // Offset: 0x%llX Token: 0x0000000\n", flags_buf, type_name, name, offset);
+            fprintf(f, "\t%s%s %s; // Offset: 0x%llX Token: %s\n", flags_buf, type_name, name, offset, tok);
         }
         fflush(f);
     }
