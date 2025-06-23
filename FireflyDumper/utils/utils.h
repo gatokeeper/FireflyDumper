@@ -12,5 +12,6 @@ char* decimal_to_hex_str(uint32_t tok);
 char* convert_generic_type(const char* input);
 const char* extract_property_name(const char* backing_field_name);
 char* il2cpp_string_to_utf8(Il2CppString* str);
+const char* convert_primitive_types(const char* type_name);
 
 #endif //ASTROLABE_UTILS_H

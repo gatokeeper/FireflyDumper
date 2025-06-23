@@ -25,14 +25,16 @@ char* convert_generic_type(const char* input) {
 
     char* outer = buf;
     char* inner = open + 1;
+    const char* inner_prim = convert_primitive_types(inner);
 
     char* outerSimple = strrchr(outer, '.');
     outer = outerSimple ? outerSimple + 1 : outer;
 
-    char* innerSimple = strrchr(inner, '.');
-    inner = innerSimple ? innerSimple + 1 : inner;
-    
-    const char* mappedInner = convert_primitive_types(inner);
+    char* innerSimple = strrchr(inner_prim, '.');
+    inner_prim = innerSimple ? innerSimple + 1 : inner_prim;
+
+    // useless lol
+    const char* mappedInner = convert_primitive_types(inner_prim);
 
     char* result = malloc(strlen(outer) + strlen(mappedInner) + 4);
     sprintf(result, "%s<%s>", outer, mappedInner);
@@ -86,4 +88,116 @@ char* il2cpp_string_to_utf8(Il2CppString* str) {
 
     utf8[pos] = '\0';
     return utf8;
+}
+
+const char* convert_primitive_types(const char* type_name) {
+    if (strcmp(type_name, "System.Boolean") == 0) {
+        return "bool";
+    }
+    if (strcmp(type_name, "System.String") == 0) {
+        return "string";
+    }
+    if (strcmp(type_name, "System.Object") == 0) {
+        return "object";
+    }
+    if (strcmp(type_name, "System.Void") == 0) {
+        return "void";
+    }
+    if (strcmp(type_name, "System.Byte") == 0) {
+        return "byte";
+    }
+    if (strcmp(type_name, "System.SByte") == 0) {
+        return "sbyte";
+    }
+    if (strcmp(type_name, "System.Char") == 0) {
+        return "char";
+    }
+    if (strcmp(type_name, "System.Decimal") == 0) {
+        return "decimal";
+    }
+    if (strcmp(type_name, "System.Double") == 0) {
+        return "double";
+    }
+    if (strcmp(type_name, "System.Single") == 0) {
+        return "float";
+    }
+    if (strcmp(type_name, "System.Int32") == 0) {
+        return "int";
+    }
+    if (strcmp(type_name, "System.UInt32") == 0) {
+        return "uint";
+    }
+    if (strcmp(type_name, "System.IntPtr") == 0) {
+        return "nint";
+    }
+    if (strcmp(type_name, "System.UIntPtr") == 0) {
+        return "nuint";
+    }
+    if (strcmp(type_name, "System.Int64") == 0) {
+        return "long";
+    }
+    if (strcmp(type_name, "System.UInt64") == 0) {
+        return "ulong";
+    }
+    if (strcmp(type_name, "System.Int16") == 0) {
+        return "short";
+    }
+    if (strcmp(type_name, "System.UInt16") == 0) {
+        return "ushort";
+    }
+
+    // Arrays
+    if (strcmp(type_name, "System.Boolean[]") == 0) {
+        return "bool[]";
+    }
+    if (strcmp(type_name, "System.Char[]") == 0) {
+        return "char[]";
+    }
+    if (strcmp(type_name, "System.Byte[]") == 0) {
+        return "byte[]";
+    }
+    if (strcmp(type_name, "System.SByte[]") == 0) {
+        return "sbyte[]";
+    }
+    if (strcmp(type_name, "System.String[]") == 0) {
+        return "string[]";
+    }
+    if (strcmp(type_name, "System.Object[]") == 0) {
+        return "object";
+    }
+    if (strcmp(type_name, "System.Decimal[]") == 0) {
+        return "decimal[]";
+    }
+    if (strcmp(type_name, "System.Double[]") == 0) {
+        return "double[]";
+    }
+    if (strcmp(type_name, "System.Single[]") == 0) {
+        return "float[]";
+    }
+    if (strcmp(type_name, "System.Int32[]") == 0) {
+        return "int[]";
+    }
+    if (strcmp(type_name, "System.UInt32[]") == 0) {
+        return "uint[]";
+    }
+    if (strcmp(type_name, "System.IntPtr[]") == 0) {
+        return "nint[]";
+    }
+    if (strcmp(type_name, "System.UIntPtr[]") == 0) {
+        return "nuint[]";
+    }
+    if (strcmp(type_name, "System.Int64[]") == 0) {
+        return "long[]";
+    }
+    if (strcmp(type_name, "System.UInt64[]") == 0) {
+        return "ulong[]";
+    }
+    if (strcmp(type_name, "System.Int16[]") == 0) {
+        return "short[]";
+    }
+    if (strcmp(type_name, "System.UInt16[]") == 0) {
+        return "ushort[]";
+    }
+
+    return type_name;
 }

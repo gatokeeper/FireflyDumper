@@ -17,18 +17,18 @@ void dump_methods(Il2CppClass* class, FILE* f) {
 
     while ((method = Il2CppFunctions_t.class_get_methods(class, &iter))) {
         const char* name = Il2CppFunctions_t.method_get_name(method);
-        Il2CppType* ret_type = Il2CppFunctions_t.method_get_return_type(method);
-        const char* type_name = short_type_name(ret_type);
+        Il2CppType* type = Il2CppFunctions_t.method_get_return_type(method);
+        const char* type_name = short_type_name(type);
 
         bool is_ctor = (strcmp(name, ".ctor") == 0 || strcmp(name, ".cctor") == 0);
 
         if (is_ctor && !printed_constructors) {
-            fprintf(f, "\n\t// Constructors\n\n");
+            fprintf(f, "\n\t// Constructors\n");
             printed_constructors = true;
         }
 
         if (!is_ctor && !printed_methods) {
-            fprintf(f, "\t// Methods\n\n");
+            fprintf(f, "\t// Methods\n");
             printed_methods = true;
         }
 
@@ -37,7 +37,16 @@ void dump_methods(Il2CppClass* class, FILE* f) {
         if (is_ctor) {
             fprintf(f, "\tvoid %s(", name);
         } else {
-            fprintf(f, "\t%s %s(", type_name, name);
+            if (strchr(type_name, '<')) {
+                fprintf(f, "\t%s %s(", type_name, name);
+//                free((void*)type_name);
+            } else {
+                const char* prim = convert_primitive_types(type_name);
+                const char* dot = strrchr(prim, '.');
+                dot = dot ? dot + 1 : prim;
+                fprintf(f, "\t%s %s(", dot, name);
+//                free((void*)prim);
+            }
         }
 
         bool first = true;
@@ -50,21 +59,23 @@ void dump_methods(Il2CppClass* class, FILE* f) {
                 fprintf(f, ", ");
             }
 
-            char* simplified;
-
             if (strchr(full_type_name, '<')) {
-                simplified = (char*) short_type_name(param);
+                char* generic_type = convert_generic_type(full_type_name);
+                fprintf(f, "%s param%i", generic_type, i);
+                free(generic_type);
             } else {
-                const char* short_name = strrchr(full_type_name, '.');
-                simplified = strdup(convert_primitive_types(short_name ? short_name + 1 : full_type_name));
+                const char* prim_type = convert_primitive_types(full_type_name);
+                const char* short_name = strrchr(prim_type, '.');
+                short_name = short_name ? short_name + 1 : prim_type;
+                fprintf(f, "%s param%i", short_name, i);
             }
 
-            fprintf(f, "%s param%i", simplified, i);
-            free(simplified);
             first = false;
         }
+
         fprintf(f, ") { }\n\n");
         fflush(f);
-        free((void*)type_name);
+
+//        free((void*)type_name);
     }
 }
