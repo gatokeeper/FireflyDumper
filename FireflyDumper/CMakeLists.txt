@@ -20,4 +20,6 @@ add_library(Astrolabe SHARED library.c
         dumper/methods.h
         dumper/class.c
         dumper/class.h
+        utils/utils.c
+        utils/utils.h
 )

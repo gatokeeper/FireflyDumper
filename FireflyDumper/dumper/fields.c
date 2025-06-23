@@ -3,6 +3,7 @@
 #include <string.h>
 #include "fields.h"
 #include "../entry.h"
+#include "../utils/utils.h"
 
 const char* convert_primitive_types(const char* type_name) {
     if (strcmp(type_name, "System.Boolean") == 0) {
@@ -152,42 +153,6 @@ const char* get_field_flags(FieldInfo* field, char* out_buf, size_t buf_size) {
     return out_buf;
 }
 
-char* decimal_to_hex(uint32_t tok) {
-    static char buf[16];
-    snprintf(buf, sizeof(buf), "0x%08X", tok);
-    return buf;
-}
-
-FieldInfo* GetFieldFromHandle(FieldInfo* field) {
-    typedef FieldInfo* (*GetFieldFromHandle_t)(FieldInfo* field);
-    uintptr_t rva = settings.ga + Il2CppRVAOffsets_t.field.GetFieldFromHandle;
-    GetFieldFromHandle_t GetFieldFromHandlePtr = (GetFieldFromHandle_t)rva;
-    return GetFieldFromHandlePtr(field);
-}
-
-Il2CppObject* GetRawConstantValue(ReflectionFieldInfo* field) {
-    typedef Il2CppObject *(*GetRawConstantValue_t)(Il2CppReflectionField* field);
-    uintptr_t rva = settings.ga + Il2CppRVAOffsets_t.field.GetRawConstantValue;
-    GetRawConstantValue_t GetRawConstantValuePtr = (GetRawConstantValue_t)rva;
-    ReflectionFieldInfo* field_info = GetFieldFromHandle(field);
-    return GetRawConstantValuePtr(field_info);
-}
-
-Il2CppArray* GetCustomAttributes(FieldInfo* field, bool inherit) {
-    typedef Il2CppArray* (*GetCustomAttributes_t)(ReflectionFieldInfo* fieldInfo, bool inherit);
-    uintptr_t rva = settings.ga + Il2CppRVAOffsets_t.field.GetCustomAttributes;
-    GetCustomAttributes_t GetCustomAttributesPtr = (GetCustomAttributes_t)rva;
-    ReflectionFieldInfo* field_info = GetFieldFromHandle(field);
-    return GetCustomAttributesPtr(field_info, inherit);
-}
-
-uint32_t get_MetadataToken(Il2CppObject* obj) {
-    typedef uint32_t (*get_MetadataToken_t)(Il2CppObject* self);
-    uintptr_t rva = settings.ga + Il2CppRVAOffsets_t.field.get_MetadataToken;
-    get_MetadataToken_t get_MetadataTokenPtr = (get_MetadataToken_t)rva;
-    return get_MetadataTokenPtr(obj);
-}
-
 bool UnboxIl2CppField(
         Il2CppClass* class,
         const char* type_name,
@@ -229,53 +194,34 @@ bool UnboxIl2CppField(
     } else return false;
 }
 
-char* il2cpp_string_to_utf8(Il2CppString* str) {
-    if (!str || str->length <= 0)
-        return NULL;
-
-    int len = str->length;
-    uint16_t* utf16 = str->chars;
-
-    int max_utf8_len = len * 3 + 1;
-    char* utf8 = (char*)malloc(max_utf8_len);
-    if (!utf8) return NULL;
-
-    int pos = 0;
-    int i;
-    for (i = 0; i < len; i++) {
-        uint16_t c = utf16[i];
-
-        if (c < 0x80) {
-            utf8[pos++] = (char)c;
-        } else if (c < 0x800) {
-            utf8[pos++] = 0xC0 | (c >> 6);
-            utf8[pos++] = 0x80 | (c & 0x3F);
-        } else {
-            utf8[pos++] = 0xE0 | (c >> 12);
-            utf8[pos++] = 0x80 | ((c >> 6) & 0x3F);
-            utf8[pos++] = 0x80 | (c & 0x3F);
-        }
-    }
-
-    utf8[pos] = '\0';
-    return utf8;
+FieldInfo* GetFieldFromHandle(FieldInfo* field) {
+    typedef FieldInfo* (*GetFieldFromHandle_t)(FieldInfo* field);
+    uintptr_t rva = settings.ga + Il2CppRVAOffsets_t.field.GetFieldFromHandle;
+    GetFieldFromHandle_t GetFieldFromHandlePtr = (GetFieldFromHandle_t)rva;
+    return GetFieldFromHandlePtr(field);
 }
 
-const char* extract_property_name(const char* backing_field_name) {
-    static char buf[256];
+Il2CppObject* GetRawConstantValue(ReflectionFieldInfo* field) {
+    typedef Il2CppObject *(*GetRawConstantValue_t)(Il2CppReflectionField* field);
+    uintptr_t rva = settings.ga + Il2CppRVAOffsets_t.field.GetRawConstantValue;
+    GetRawConstantValue_t GetRawConstantValuePtr = (GetRawConstantValue_t)rva;
+    ReflectionFieldInfo* field_info = GetFieldFromHandle(field);
+    return GetRawConstantValuePtr(field_info);
+}
 
-    const char* start = strchr(backing_field_name, '<');
-    const char* end = strchr(backing_field_name, '>');
-    if (start && end && end > start) {
-        size_t len = end - start - 1;
-        if (len >= sizeof(buf)) len = sizeof(buf) - 1;
-        strncpy(buf, start + 1, len);
-        buf[len] = '\0';
-        return buf;
-    }
+Il2CppArray* GetCustomAttributes(FieldInfo* field, bool inherit) {
+    typedef Il2CppArray* (*GetCustomAttributes_t)(ReflectionFieldInfo* fieldInfo, bool inherit);
+    uintptr_t rva = settings.ga + Il2CppRVAOffsets_t.field.GetCustomAttributes;
+    GetCustomAttributes_t GetCustomAttributesPtr = (GetCustomAttributes_t)rva;
+    ReflectionFieldInfo* field_info = GetFieldFromHandle(field);
+    return GetCustomAttributesPtr(field_info, inherit);
+}
 
-    // empty
-    return backing_field_name;
+uint32_t get_MetadataToken(Il2CppObject* obj) {
+    typedef uint32_t (*get_MetadataToken_t)(Il2CppObject* self);
+    uintptr_t rva = settings.ga + Il2CppRVAOffsets_t.field.get_MetadataToken;
+    get_MetadataToken_t get_MetadataTokenPtr = (get_MetadataToken_t)rva;
+    return get_MetadataTokenPtr(obj);
 }
 
 void dump_attribute_fields(Il2CppObject* attribute, FILE* f) {
@@ -342,12 +288,17 @@ void dump_attribute_fields(Il2CppObject* attribute, FILE* f) {
 void dump_fields(Il2CppClass* class, FILE* f) {
     FieldInfo* field;
     void* iter = 0;
+    bool printed_fields = false;
 
     while ((field = Il2CppFunctions_t.class_get_fields(class, &iter))) {
+        if (field != NULL && !printed_fields) {
+            fprintf(f, "\t// Fields\n");
+            printed_fields = true;
+        }
         const char* name = Il2CppFunctions_t.field_get_name(field);
-        const char* full_type_name = convert_primitive_types(
-                Il2CppFunctions_t.type_get_name(
-                        Il2CppFunctions_t.field_get_type(field)));
+        const char* raw_type = Il2CppFunctions_t.type_get_name(
+                Il2CppFunctions_t.field_get_type(field));
+        char* full_type_name = convert_generic_type(raw_type);
 
         const char* dot = strrchr(full_type_name, '.');
         const char* type_name = dot ? dot + 1 : full_type_name;
@@ -355,7 +306,7 @@ void dump_fields(Il2CppClass* class, FILE* f) {
 
         char flags_buf[128];
         get_field_flags(field, flags_buf, sizeof(flags_buf));
-        char* tok = decimal_to_hex((get_MetadataToken(GetFieldFromHandle(field))));
+        char* tok = decimal_to_hex_str((get_MetadataToken(GetFieldFromHandle(field))));
 
         Il2CppArray* attr_array = GetCustomAttributes(field, true);
 
@@ -380,5 +331,6 @@ void dump_fields(Il2CppClass* class, FILE* f) {
             fprintf(f, "\t%s%s %s; // Offset: 0x%llX Token: %s\n", flags_buf, type_name, name, offset, tok);
         }
         fflush(f);
+        free(full_type_name);
     }
 }

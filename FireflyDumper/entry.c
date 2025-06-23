@@ -60,6 +60,3 @@ DWORD MainThread(LPVOID hMod) {
     }
     return 0;
 }
-
-
-

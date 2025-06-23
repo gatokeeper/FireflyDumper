@@ -87,7 +87,6 @@ void dump_assembly(FILE* f, Il2CppAssembly* assembly, int assembly_index) {
         }
 
         fprintf(f, "\n{\n");
-        fprintf(f, "\t// Fields\n");
         dump_fields(class, f);
         
         dump_methods(class, f);
