@@ -199,16 +199,6 @@ typedef struct {
     Il2CppObject* vector[0];
 } Il2CppArray;
 
-typedef struct {
-    void* methodPointer;
-    void* invoker_method;
-    const char* name;
-    Il2CppClass* klass;
-    const Il2CppType* return_type;
-    ParameterInfo** parameters;
-    uint8_t parameters_count;
-} FakeMethodInfo;
-
 typedef void* (*assembly_get_image_t)(void* assembly);
 typedef MethodInfo* (*class_get_methods_t)(void* klass, void** iter);
 typedef const char* (*class_get_name_t)(void* klass);
@@ -270,7 +260,7 @@ typedef struct {
     image_get_name_t image_get_name;
     thread_attach_t thread_attach;
 
-} Il2CppFunctions;
+} Il2CppFunctionTable;
 
 typedef struct {
     uintptr_t GetFieldFromHandle;
@@ -282,12 +272,19 @@ typedef struct {
 } Field;
 
 typedef struct {
+    uintptr_t GetMethodFromHandle;
+    uintptr_t GetParameters;
+    uintptr_t get_Name;
+} Method;
+
+typedef struct {
     Field field;
-} Il2CppRVAOffsets;
+    Method method;
+} Il2CppReflectionOffsetTable;
 
 // global
-extern Il2CppFunctions Il2CppFunctions_t;
-extern Il2CppRVAOffsets Il2CppRVAOffsets_t;
+extern Il2CppFunctionTable Il2CppFunctions;
+extern Il2CppReflectionOffsetTable ReflectionOffsets;
 
 uintptr_t method_get_relative_pointer(void* arg);
 void* class_get_type(void* arg);

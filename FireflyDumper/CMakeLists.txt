@@ -22,4 +22,6 @@ add_library(Astrolabe SHARED library.c
         dumper/class.h
         utils/utils.c
         utils/utils.h
+        utils/mem.c
+        utils/mem.h
 )

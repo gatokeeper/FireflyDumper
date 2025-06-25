@@ -13,20 +13,20 @@ void dump_domain(FILE* f) {
 
     settings.class_byval = 128;
 
-    Il2CppDomain* domain = Il2CppFunctions_t.domain_get();
-    Il2CppFunctions_t.thread_attach(domain);
-    Il2CppAssembly** assemblies = Il2CppFunctions_t.domain_get_assemblies(domain, &assembly_count);
+    Il2CppDomain* domain = Il2CppFunctions.domain_get();
+    Il2CppFunctions.thread_attach(domain);
+    Il2CppAssembly** assemblies = Il2CppFunctions.domain_get_assemblies(domain, &assembly_count);
 
     int i;
     for (i = 0; i < assembly_count; i++) {
-        Il2CppImage* image = Il2CppFunctions_t.assembly_get_image(assemblies[i]);
+        Il2CppImage* image = Il2CppFunctions.assembly_get_image(assemblies[i]);
 
         if (!image) {
             fprintf(f, "// Assembly #%i: (null image)\n", i);
             continue;
         }
 
-        const char* image_name = Il2CppFunctions_t.image_get_name(image);
+        const char* image_name = Il2CppFunctions.image_get_name(image);
         if (!image_name) {
             fprintf(f, "// Assembly #%i: (null name)\n", i);
             continue;
@@ -34,7 +34,7 @@ void dump_domain(FILE* f) {
 
         fprintf(f, "// Assembly #%i: %s\n", i, image_name);
         fflush(f);
-        class_count += Il2CppFunctions_t.image_get_class_count(image);
+        class_count += Il2CppFunctions.image_get_class_count(image);
     }
 
     fprintf(f, "\n");

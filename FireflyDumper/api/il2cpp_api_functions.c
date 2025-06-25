@@ -3,8 +3,8 @@
 #include "il2cpp_api_functions.h"
 #include "../entry.h"
 
-Il2CppFunctions Il2CppFunctions_t;
-Il2CppRVAOffsets Il2CppRVAOffsets_t;
+Il2CppFunctionTable Il2CppFunctions;
+Il2CppReflectionOffsetTable ReflectionOffsets;
 
 uintptr_t method_get_relative_pointer(void* arg) {
     if (!arg) return 0;
@@ -23,17 +23,21 @@ void* class_get_type(void* arg) {
 }
 
 void il2cpp_rva_offsets_init() {
-    Il2CppRVAOffsets_t.field.GetFieldFromHandle = 0x105103A0;  // FieldInfo::GetFieldFromHandle
-    Il2CppRVAOffsets_t.field.GetRawConstantValue = 0x105164B0; // MonoField::GetRawConstantValue
-    Il2CppRVAOffsets_t.field.GetCustomAttributes = 0x10515EF0; // MonoField::GetCustomAttributes
-    Il2CppRVAOffsets_t.field.get_MetadataToken = 0x10511460;   // MemberInfo::get_MetadataToken
+    ReflectionOffsets.field.GetFieldFromHandle =       settings.ga + 0x105103A0; // FieldInfo::GetFieldFromHandle
+    ReflectionOffsets.field.GetRawConstantValue =      settings.ga + 0x105164B0; // MonoField::GetRawConstantValue
+    ReflectionOffsets.field.GetCustomAttributes =      settings.ga + 0x10515EF0; // MonoField::GetCustomAttributes
+    ReflectionOffsets.field.get_MetadataToken =        settings.ga + 0x10511460; // MemberInfo::get_MetadataToken
+
+    ReflectionOffsets.method.GetMethodFromHandle =     settings.ga + 0x10512960; // MethodBase::GetMethodFromHandle
+    ReflectionOffsets.method.GetParameters =           settings.ga + 0x10516890; // MonoMethod::GetParameters
+    ReflectionOffsets.method.get_Name =                settings.ga + 0x10519D30; // ParameterInfo::get_Name
 }
 
 void il2cpp_functions_init(uintptr_t il2cpp_init_addr) {
-    Il2CppFunctions_t.table = (void**)il2cpp_init_addr;
+    Il2CppFunctions.table = (void**)il2cpp_init_addr;
 
     // i love macros
-    #define RESOLVE_FUNC(name, index) Il2CppFunctions_t.name = (typeof(Il2CppFunctions_t.name)) Il2CppFunctions_t.table[index];
+    #define RESOLVE_FUNC(name, index) Il2CppFunctions.name = (typeof(Il2CppFunctions.name)) Il2CppFunctions.table[index];
 
     RESOLVE_FUNC(assembly_get_image, 22);
 

@@ -33,7 +33,6 @@ char* convert_generic_type(const char* input) {
     char* innerSimple = strrchr(inner_prim, '.');
     inner_prim = innerSimple ? innerSimple + 1 : inner_prim;
 
-    // useless lol
     const char* mappedInner = convert_primitive_types(inner_prim);
 
     char* result = malloc(strlen(outer) + strlen(mappedInner) + 4);
@@ -88,6 +87,103 @@ char* il2cpp_string_to_utf8(Il2CppString* str) {
 
     utf8[pos] = '\0';
     return utf8;
+}
+
+// stack overflow 💗
+char *strremove(char *str, const char *sub) {
+    char *p, *q, *r;
+    if (*sub && (q = r = strstr(str, sub)) != NULL) {
+        size_t len = strlen(sub);
+        while ((r = strstr(p = r + len, sub)) != NULL) {
+            memmove(q, p, r - p);
+            q += r - p;
+        }
+        memmove(q, p, strlen(p) + 1);
+    }
+    return str;
+}
+
+const char* get_field_flags(FieldInfo* field, char* out_buf, size_t buf_size) {
+    uint32_t attrs = Il2CppFunctions.field_get_flags(field);
+    uint32_t access = attrs & FIELD_ATTRIBUTE_FIELD_ACCESS_MASK;
+
+    out_buf[0] = '\0';
+
+    switch (access) {
+        case FIELD_ATTRIBUTE_PRIVATE:
+            strncat(out_buf, "private ", buf_size - strlen(out_buf) - 1);
+            break;
+        case FIELD_ATTRIBUTE_PUBLIC:
+            strncat(out_buf, "public ", buf_size - strlen(out_buf) - 1);
+            break;
+        case FIELD_ATTRIBUTE_FAMILY:
+            strncat(out_buf, "protected ", buf_size - strlen(out_buf) - 1);
+            break;
+        case FIELD_ATTRIBUTE_ASSEMBLY:
+        case FIELD_ATTRIBUTE_FAM_AND_ASSEM:
+            strncat(out_buf, "internal ", buf_size - strlen(out_buf) - 1);
+            break;
+        case FIELD_ATTRIBUTE_FAM_OR_ASSEM:
+            strncat(out_buf, "protected internal ", buf_size - strlen(out_buf) - 1);
+            break;
+        default:
+            strncat(out_buf, "public ", buf_size - strlen(out_buf) - 1);
+            break;
+    }
+
+    if (attrs & FIELD_ATTRIBUTE_LITERAL) {
+        strncat(out_buf, "const ", buf_size - strlen(out_buf) - 1);
+    } else {
+        if (attrs & FIELD_ATTRIBUTE_STATIC) {
+            strncat(out_buf, "static ", buf_size - strlen(out_buf) - 1);
+        }
+        if (attrs & FIELD_ATTRIBUTE_INIT_ONLY) {
+            strncat(out_buf, "readonly ", buf_size - strlen(out_buf) - 1);
+        }
+    }
+
+    return out_buf;
+}
+
+bool UnboxIl2CppField(
+        Il2CppClass* class,
+        const char* type_name,
+        char* flags_buf,
+        const char* name,
+        const char* data,
+        char* tok,
+        FILE* f
+) {
+    if (strcmp(type_name, "int") == 0 || strcmp(type_name, "uint") == 0) {
+        int val = *(int*)data;
+        fprintf(f, "\t%s%s %s = %d; // Token: %s\n", flags_buf, type_name, name, val, tok);
+        fflush(f);
+        return true;
+
+    } else if (strcmp(type_name, "long") == 0 || strcmp(type_name, "ulong") == 0) {
+        long long val = *(long long*)data;
+        fprintf(f, "\t%s%s %s = %lld; // Token: %s\n", flags_buf, type_name, name, val, tok);
+        fflush(f);
+        return true;
+
+    } else if (strcmp(type_name, "float") == 0) {
+        float val = *(float*)data;
+        fprintf(f, "\t%s%s %s = %g; // Token: %s\n", flags_buf, type_name, name, val, tok);
+        fflush(f);
+        return true;
+
+    } else if (strcmp(type_name, "double") == 0) {
+        double val = *(double*)data;
+        fprintf(f, "\t%s%s %s = %g; // Token: %s\n", flags_buf, type_name, name, val, tok);
+        fflush(f);
+        return true;
+
+    } else if (Il2CppFunctions.class_is_enum(class)) {
+        int val = *(int*)data;
+        fprintf(f, "\t%s%s %s = %d; // Token: %s\n", flags_buf, type_name, name, val, tok);
+        fflush(f);
+        return true;
+    } else return false;
 }
 
 const char* convert_primitive_types(const char* type_name) {

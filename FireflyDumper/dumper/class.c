@@ -2,7 +2,7 @@
 #include "class.h"
 
 void get_class_modifiers(Il2CppClass* class, FILE* f) {
-    uint32_t flags = Il2CppFunctions_t.class_get_flags(class);
+    uint32_t flags = Il2CppFunctions.class_get_flags(class);
 
     uint32_t visibility = flags & TYPE_ATTRIBUTE_VISIBILITY_MASK;
     switch (visibility) {
@@ -35,17 +35,17 @@ void get_class_modifiers(Il2CppClass* class, FILE* f) {
         fprintf(f, "static ");
     } else if (!(flags & TYPE_ATTRIBUTE_INTERFACE) && (flags & TYPE_ATTRIBUTE_ABSTRACT)) {
         fprintf(f, "abstract ");
-    } else if (!Il2CppFunctions_t.class_is_valuetype(class) &&
-               !Il2CppFunctions_t.class_is_enum(class) &&
+    } else if (!Il2CppFunctions.class_is_valuetype(class) &&
+               !Il2CppFunctions.class_is_enum(class) &&
                (flags & TYPE_ATTRIBUTE_SEALED)) {
         fprintf(f, "sealed ");
     }
 
     if (flags & TYPE_ATTRIBUTE_INTERFACE) {
         fprintf(f, "interface ");
-    } else if (Il2CppFunctions_t.class_is_enum(class)) {
+    } else if (Il2CppFunctions.class_is_enum(class)) {
         fprintf(f, "enum ");
-    } else if (Il2CppFunctions_t.class_is_valuetype(class)) {
+    } else if (Il2CppFunctions.class_is_valuetype(class)) {
         fprintf(f, "struct ");
     } else {
         fprintf(f, "class ");

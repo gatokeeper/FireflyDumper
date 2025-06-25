@@ -4,9 +4,10 @@
 #include "methods.h"
 #include "fields.h"
 #include "../utils/utils.h"
+#include "../entry.h"
 
 const char* short_type_name(Il2CppType* type) {
-    return convert_generic_type(Il2CppFunctions_t.type_get_name(type));
+    return convert_generic_type(Il2CppFunctions.type_get_name(type));
 }
 
 void dump_methods(Il2CppClass* class, FILE* f) {
@@ -15,9 +16,9 @@ void dump_methods(Il2CppClass* class, FILE* f) {
     bool printed_constructors = false;
     bool printed_methods = false;
 
-    while ((method = Il2CppFunctions_t.class_get_methods(class, &iter))) {
-        const char* name = Il2CppFunctions_t.method_get_name(method);
-        Il2CppType* type = Il2CppFunctions_t.method_get_return_type(method);
+    while ((method = Il2CppFunctions.class_get_methods(class, &iter))) {
+        const char* name = Il2CppFunctions.method_get_name(method);
+        Il2CppType* type = Il2CppFunctions.method_get_return_type(method);
         const char* type_name = short_type_name(type);
 
         bool is_ctor = (strcmp(name, ".ctor") == 0 || strcmp(name, ".cctor") == 0);
@@ -39,21 +40,19 @@ void dump_methods(Il2CppClass* class, FILE* f) {
         } else {
             if (strchr(type_name, '<')) {
                 fprintf(f, "\t%s %s(", type_name, name);
-//                free((void*)type_name);
             } else {
                 const char* prim = convert_primitive_types(type_name);
                 const char* dot = strrchr(prim, '.');
                 dot = dot ? dot + 1 : prim;
                 fprintf(f, "\t%s %s(", dot, name);
-//                free((void*)prim);
             }
         }
 
         bool first = true;
         int i;
-        for (i = 0; i < Il2CppFunctions_t.method_get_param_count(method); i++) {
-            Il2CppType* param = Il2CppFunctions_t.method_get_param(method, i);
-            const char* full_type_name = Il2CppFunctions_t.type_get_name(param);
+        for (i = 0; i < Il2CppFunctions.method_get_param_count(method); i++) {
+            Il2CppType* param = Il2CppFunctions.method_get_param(method, i);
+            const char* full_type_name = Il2CppFunctions.type_get_name(param);
 
             if (!first) {
                 fprintf(f, ", ");
@@ -75,7 +74,5 @@ void dump_methods(Il2CppClass* class, FILE* f) {
 
         fprintf(f, ") { }\n\n");
         fflush(f);
-
-//        free((void*)type_name);
     }
 }
