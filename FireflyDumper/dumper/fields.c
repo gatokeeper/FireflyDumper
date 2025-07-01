@@ -119,17 +119,19 @@ void dump_fields(Il2CppClass* class, FILE* f) {
         get_field_flags(field, flags_buf, sizeof(flags_buf));
         char* tok = decimal_to_hex_str((get_MetadataToken(GetFieldFromHandle(field))));
 
-        Il2CppArray* attr_array = GetCustomAttributes(field, true);
+        if (ReflectionOffsets.field.GetCustomAttributes != settings.ga) {
+            Il2CppArray* attr_array = GetCustomAttributes(field, true);
 
-        uint32_t i;
-        for (i = 0; i < attr_array->max_length; i++) {
-            Il2CppObject* attribute = attr_array->vector[i];
-            dump_attribute_fields(attribute, f);
+            uint32_t i;
+            for (i = 0; i < attr_array->max_length; i++) {
+                Il2CppObject* attribute = attr_array->vector[i];
+                dump_attribute_fields(attribute, f);
+            }
         }
 
         if (strstr(flags_buf, "const") &&
-        ReflectionOffsets.field.GetRawConstantValue != 0 &&
-        ReflectionOffsets.field.GetFieldFromHandle != 0) {
+        ReflectionOffsets.field.GetRawConstantValue != settings.ga &&
+        ReflectionOffsets.field.GetFieldFromHandle != settings.ga) {
 
             Il2CppObject* value = GetRawConstantValue(field);
             char* raw_data = (char*)value + 16;

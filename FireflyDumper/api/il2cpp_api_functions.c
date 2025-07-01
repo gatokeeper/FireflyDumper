@@ -23,14 +23,10 @@ void* class_get_type(void* arg) {
 }
 
 void il2cpp_rva_offsets_init() {
-    ReflectionOffsets.field.GetFieldFromHandle =       settings.ga + 0x105103A0; // FieldInfo::GetFieldFromHandle
-    ReflectionOffsets.field.GetRawConstantValue =      settings.ga + 0x105164B0; // MonoField::GetRawConstantValue
-    ReflectionOffsets.field.GetCustomAttributes =      settings.ga + 0x10515EF0; // MonoField::GetCustomAttributes
-    ReflectionOffsets.field.get_MetadataToken =        settings.ga + 0x10511460; // MemberInfo::get_MetadataToken
-
-    ReflectionOffsets.method.GetMethodFromHandle =     settings.ga + 0x10512960; // MethodBase::GetMethodFromHandle
-    ReflectionOffsets.method.GetParameters =           settings.ga + 0x10516890; // MonoMethod::GetParameters
-    ReflectionOffsets.method.get_Name =                settings.ga + 0x10519D30; // ParameterInfo::get_Name
+    ReflectionOffsets.field.GetFieldFromHandle =       settings.ga + 0x110F98E0; // FieldInfo::GetFieldFromHandle
+    ReflectionOffsets.field.GetRawConstantValue =      settings.ga + 0x110FF9E0; // MonoField::GetRawConstantValue
+    ReflectionOffsets.field.GetCustomAttributes =      settings.ga + 0x110FF420; // MonoField::GetCustomAttributes
+    ReflectionOffsets.field.get_MetadataToken =        settings.ga + 0x110FA9A0; // MemberInfo::get_MetadataToken
 }
 
 void il2cpp_functions_init(uintptr_t il2cpp_init_addr) {
